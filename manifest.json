@@ -1,0 +1,10 @@
+{
+  "name": "Weather PWA",
+  "short_name": "Weather",
+  "description": "Progressive web app for weather forecasts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait-primary"
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Weather PWA - Get current weather and forecasts">
+    <meta name="theme-color" content="#1e3a8a">
+    <title>Weather PWA</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-900 to-blue-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold flex items-center gap-2">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                Weather PWA
+            </h1>
+            <div id="status" class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg text-white text-sm">
+                <span class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
+                <span id="status-text">Online</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            
+            <!-- Search Section -->
+            <section class="bg-white rounded-2xl shadow-2xl p-6 mb-6">
+                <form id="search-form" class="flex flex-col sm:flex-row gap-2 mb-4">
+                    <input 
+                        type="text" 
+                        id="city-input" 
+                        placeholder="Enter city name..." 
+                        required
+                        class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+                    >
+                    <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-800 transition flex items-center gap-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Search
+                    </button>
+                </form>
+                <button id="locate-btn" class="w-full bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
+                        <line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/>
+                        <line x1="10.88" y1="21.94" x2="15.46" y2="14"/>
+                    </svg>
+                    Use My Location
+                </button>
+            </section>
+
+            <!-- Loading -->
+            <div id="loading" class="hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-12 text-center">
+                    <div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-gray-600 text-lg">Loading weather data...</p>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-12 text-center">
+                    <svg class="w-20 h-20 text-red-500 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p id="error-msg" class="text-gray-700 text-lg mb-6"></p>
+                    <button id="retry-btn" class="bg-blue-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-600 transition">Try Again</button>
+                </div>
+            </div>
+
+            <!-- Weather Content -->
+            <div id="weather" class="hidden">
+                <!-- Current Weather -->
+                <section class="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+                    <div class="text-center mb-6">
+                        <h2 id="location" class="text-3xl font-bold text-gray-900 mb-1"></h2>
+                        <p id="country" class="text-gray-600"></p>
+                    </div>
+                    <div class="flex items-center justify-center gap-6 mb-6">
+                        <div id="icon" class="text-8xl"></div>
+                        <div class="flex items-start">
+                            <span id="temp" class="text-7xl font-bold text-gray-900"></span>
+                            <span class="text-4xl text-gray-600 mt-2">°C</span>
+                        </div>
+                    </div>
+                    <p id="desc" class="text-center text-2xl text-gray-700 capitalize mb-6"></p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <svg class="w-8 h-8 text-blue-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                            </svg>
+                            <p class="text-sm text-gray-600 mb-1">Feels like</p>
+                            <p id="feels" class="text-xl font-bold text-gray-900"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <svg class="w-8 h-8 text-blue-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 13v6"/><path d="M16 11v8"/><path d="M12 16v3"/><path d="M12 3v1"/>
+                                <path d="m8 8-2 2"/><path d="m16 8 2 2"/>
+                            </svg>
+                            <p class="text-sm text-gray-600 mb-1">Humidity</p>
+                            <p id="humidity" class="text-xl font-bold text-gray-900"></p>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <svg class="w-8 h-8 text-blue-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                            </svg>
+                            <p class="text-sm text-gray-600 mb-1">Wind</p>
+                            <p id="wind" class="text-xl font-bold text-gray-900"></p>
+                        </div>
+                    </div>
+                    <p id="updated" class="text-center text-sm text-gray-500 mt-6 italic"></p>
+                </section>
+
+                <!-- Forecast -->
+                <section class="bg-white rounded-2xl shadow-2xl p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">3-Day Forecast</h2>
+                    <div id="forecast" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                </section>
+            </div>
+
+            <!-- Offline Message -->
+            <div id="offline" class="hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-12 text-center">
+                    <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+                        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                        <line x1="12" y1="20" x2="12.01" y2="20"/>
+                    </svg>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">You're Offline</h2>
+                    <p class="text-gray-600">No cached data available for this location. Please try again when online.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 py-6 text-center text-white text-sm">
+        Weather data by <a href="https://openweathermap.org/" target="_blank" class="underline hover:opacity-80">OpenWeatherMap</a>
+    </footer>
+
+    <script src="/app.js"></script>
+</body>
+</html>

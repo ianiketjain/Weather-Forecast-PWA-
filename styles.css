@@ -1,0 +1,16 @@
+:root {
+    --primary: #1e3a8a;
+    --primary-light: #3b82f6;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	min-height: 100%;
+	overflow-x: hidden;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	background-color: var(--color-bg-primary);
+}
